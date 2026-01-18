@@ -50,7 +50,7 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | excluded-positions | 17 | 17 ✅ | - |
 | AML layer | 5 | 5 ✅ | 1 |
 | scroller layers | 3 | 3 ✅ | 5 |
-| AML方式 | input-processor | input-processor ✅ | ドライバ内蔵 |
+| AML方式 | **ドライバ内蔵** ✅ | input-processor | ドライバ内蔵 ✅ |
 
 ---
 
@@ -110,7 +110,7 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 - BLE実験的機能無効化
 - CONFIG_ZMK_POINTING（左側）
 
-✅ **動作に関わる設定はmoNa2-v2踏襲**
+✅ **動作に関わる設定はmoNa2-v2踏襲（ただし安定性のためAMLはLiNEA40方式に変更）**
 - キーマップ（combos、macros、behaviors）
-- AML設定（input-processor方式）
+- AML設定（**ドライバ内蔵方式**: input-processor版は廃止）
 - ロータリーエンコーダー設定
