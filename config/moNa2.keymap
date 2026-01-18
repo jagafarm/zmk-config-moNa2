@@ -28,7 +28,7 @@
     combos {
         compatible = "zmk,combos";
 
-        layer4_ESC {
+        layer6_ESC {
             bindings = <&lt 6 ESC>;
             key-positions = <39 38>;
         };
