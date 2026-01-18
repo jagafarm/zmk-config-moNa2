@@ -69,13 +69,12 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 
 | 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
 |------|--------------|----------|---------|
-| BT_PERIPHERAL_PREF_MIN_INT | 6 | - | - |
-| BT_PERIPHERAL_PREF_MAX_INT | 12 | 12 | - |
+| BT_CTLR_TX_PWR_PLUS_8 | **y** (Max) | - | - |
 | BT_CTLR_TX_PWR_PLUS_4 | - | y | - |
-| ZMK_BLE_EXPERIMENTAL_CONN | **なし** | y ⚠️ | なし ✅ |
-| BT_CTLR_PHY_2M | **なし** | y | なし ✅ |
+| BLE_EXPERIMENTAL_CONN | 無効 | y ⚠️ | 無効 ✅ |
+| BT_CTLR_PHY_2M | 無効 | y | 無効 ✅ |
 
-> **ZMK_BLE_EXPERIMENTAL_CONN**: moNa2-v2では有効だが、安定性のため無効化
+> **BT_CTLR_TX_PWR**: 接続安定化のため、最大出力（+8dBm）を設定（moNa2-v2は+4dBm、LiNEA40はデフォルト0dBm推測）
 
 ---
 
