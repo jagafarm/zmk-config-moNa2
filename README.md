@@ -33,11 +33,11 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | RUN_DOWNSHIFT_TIME | 3264 | 3264 | 3264 ✅ |
 | REST1_SAMPLE_TIME | **40** | 20 | 40 ✅ |
 | REST1_DOWNSHIFT_TIME | 9600 | 9600 | 9600 ✅ |
-| INVERT_Y | y | - | y ✅ |
+| INVERT_Y | **n** | - | y ✅ |
 | INVERT_X | **n** | - | y ⚠️ |
 | AUTOMOUSE_TIMEOUT | 550 | 550 | 550 ✅ |
 
-> **INVERT_X**: トラックボールの物理配置が異なるため、moNa2は`n`を使用
+> **INVERT_X/Y**: moNa2とLiNEA40でトラックボールの物理的な取り付け向きが異なるため、両方 `n` (反転なし) に設定
 
 ---
 
