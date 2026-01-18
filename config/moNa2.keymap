@@ -25,6 +25,26 @@
 };
 
 / {
+    input_processors {
+        zip_wheel_scaler: zip_wheel_scaler {
+            compatible = "zmk,input-processor-scaler";
+            #input-processor-cells = <2>;
+            type = <INPUT_EV_REL>;
+            codes = <INPUT_REL_WHEEL>;
+            track-remainders;
+        };
+    };
+};
+
+&trackball_central_listener {
+    scroller {
+        layers = <SCROLL>;
+        input-processors =
+            <&zip_xy_to_scroll_mapper>,
+            <&zip_wheel_scaler 1 10>;
+    };
+};
+/ {
     combos {
         compatible = "zmk,combos";
 
