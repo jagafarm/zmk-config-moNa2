@@ -1,9 +1,29 @@
 #include <dt-bindings/zmk/matrix_transform.h>
+#include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
+
+#define AML_REQUIRE_IDLE_MS 400
 
 / {
     chosen {
         zmk,kscan = &kscan0;
         zmk,matrix_transform = &default_transform;
+    };
+
+    aml_temp_layer: aml_temp_layer {
+        compatible = "zmk,input-processor-temp-layer";
+        #input-processor-cells = <2>;
+        require-prior-idle-ms = <AML_REQUIRE_IDLE_MS>;
+        /* Keep AML active while clicking the mouse button key (position 17 = MB1) */
+        excluded-positions = <17>;
+    };
+
+    trackball_central_listener: trackball_central_listener {
+        compatible = "zmk,input-listener";
+        status = "disabled";
+        input-processors = 
+            <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT>,
+            <&aml_temp_layer 5 550>;
     };
 
     default_transform: keymap_transform_0 {
@@ -45,6 +65,6 @@
     sensors: sensors {
         compatible = "zmk,keymap-sensors";
         sensors = <&left_encoder &right_encoder>;
-        triggers-per-rotation = <100>;   // スクロール量を1/10にした。10→100変更
+        triggers-per-rotation = <10>;
     };
 };
