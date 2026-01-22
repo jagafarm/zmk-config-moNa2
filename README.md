@@ -2,13 +2,9 @@
 
 LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定を適用したファームウェア設定。
 
-## 変更履歴
-
-- **2026-01-18**: BLE安定化（LiNEA40設定踏襲 + moNa2-v2キーマップ適用）
-
 ---
 
-## 設定比較（2026-01-18時点）
+## 設定比較
 
 ### 概要
 
@@ -25,7 +21,7 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 
 | 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
 |------|--------------|----------|---------|
-| CPI | 1200 | 1200 | 1200 ✅ |
+| CPI | 1200 | - | 1200 ✅ |
 | SNIPE_CPI | 500 | - | 500 ✅ |
 | SMART_ALGORITHM | y | - | y ✅ |
 | SCROLL_TICK | 2 | - | 2 ✅ |
@@ -33,24 +29,26 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | RUN_DOWNSHIFT_TIME | 3264 | 3264 | 3264 ✅ |
 | REST1_SAMPLE_TIME | **40** | 20 | 40 ✅ |
 | REST1_DOWNSHIFT_TIME | 9600 | 9600 | 9600 ✅ |
-| INVERT_Y | **n** | - | y ✅ |
-| INVERT_X | **n** | - | y ⚠️ |
-| AUTOMOUSE_TIMEOUT | 550 | 550 | 550 ✅ |
+| INVERT_Y | **n** | - | y |
+| INVERT_X | **n** | - | y |
+| INVERT_SCROLL_X | **y** | - | n |
+| INVERT_SCROLL_Y | n | - | n ✅ |
+| AUTOMOUSE_TIMEOUT | 550 | - | 550 ✅ |
 
-> **INVERT_X/Y**: moNa2とLiNEA40でトラックボールの物理的な取り付け向きが異なるため、両方 `n` (反転なし) に設定
+> **INVERT_X/Y**: moNa2とLiNEA40でトラックボールの物理的な取り付け向きが異なるため、moNa2では`n`（反転なし）に設定
 
 ---
 
-### AML設定（dtsi/overlay）
+### AML設定（overlay/dtsi）
 
 | 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
 |------|--------------|----------|---------|
-| AML_REQUIRE_IDLE_MS | 400 | 400 ✅ | - |
-| aml_temp_layer timeout | 550 | 550 ✅ | - |
-| excluded-positions | 17 | 17 ✅ | - |
-| AML layer | 5 | 5 ✅ | 1 |
-| scroller layers | 3 | 3 ✅ | 5 |
+| automouse-layer | **1** | なし（input-processor） | 1 ✅ |
+| scroll-layers | **5** | なし（input-processor） | 5 ✅ |
+| snipe-layers | コメントアウト | なし | 2 |
 | AML方式 | **ドライバ内蔵** ✅ | input-processor | ドライバ内蔵 ✅ |
+
+> **AML方式**: moNa2-v2はinput-processor方式を使用していたが、安定性のためLiNEA40と同じドライバ内蔵方式を採用
 
 ---
 
@@ -69,12 +67,12 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 
 | 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
 |------|--------------|----------|---------|
-| BT_CTLR_TX_PWR | **デフォルト** | +4dBm | デフォルト |
-| PERIPHERAL_PREF_INT | **デフォルト** | - | デフォルト |
-| ZMK_BLE_EXPERIMENTAL_CONN | 無効 | y ⚠️ | 無効 ✅ |
-| BT_CTLR_PHY_2M | 無効 | y | 無効 ✅ |
+| BT_CTLR_TX_PWR_PLUS_4 | **y（右）, y（左）** | y | なし |
+| BT_PERIPHERAL_PREF_MAX_INT | なし | 12 | なし ✅ |
+| ZMK_BLE_EXPERIMENTAL_CONN | **なし** | y ⚠️ | なし ✅ |
+| BT_CTLR_PHY_2M | **なし** | y | なし ✅ |
 
-> **設定**: LiNEA40と同じ「完全なデフォルト」に戻しました。接続安定性と電池持ちのバランスが最も良い状態です。
+> **BLE_EXPERIMENTAL_CONN / PHY_2M**: moNa2-v2で有効だった実験的機能は安定性のため無効化
 
 ---
 
@@ -84,8 +82,11 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 |------|--------------|----------|---------|
 | CONFIG_ZMK_POINTING | **y** | なし | y ✅ |
 | CONFIG_NFCT_PINS_AS_GPIOS | y | なし | y ✅ |
-| CONFIG_BT_CTLR_TX_PWR_PLUS_4 | なし | y | なし |
-| CONFIG_ZMK_BLE_EXPERIMENTAL_CONN | なし | y ⚠️ | なし ✅ |
+| CONFIG_EC11 | y | y | y ✅ |
+| CONFIG_BT_CTLR_TX_PWR_PLUS_4 | **y** | y | なし |
+| CONFIG_ZMK_BLE_EXPERIMENTAL_CONN | **なし** | y ⚠️ | なし ✅ |
+| CONFIG_BT_CTLR_PHY_2M | **なし** | n | なし ✅ |
+| CONFIG_BT_BAS | **y** | なし | なし |
 
 > **CONFIG_ZMK_POINTING**: split pointing動作に必要。LiNEA40にはあるがmoNa2-v2にはなかった
 
@@ -99,7 +100,35 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | trackball内cpi設定 | なし（conf側） | overlay内 | なし ✅ |
 | trackball内invert設定 | なし（conf側） | overlay内 | なし ✅ |
 | irq-gpios | `&gpio0 2` | `&gpio0 2` ✅ | `&xiao_d 6` |
-| scroller設定 | input-processor | input-processor ✅ | ドライバ内蔵 |
+| automouse-layer | **overlay内で設定** | なし | overlay内 ✅ |
+| scroll-layers | **overlay内で設定** | なし（input-processor） | overlay内 ✅ |
+
+---
+
+### west.yml（依存関係）比較
+
+| 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
+|------|--------------|----------|---------|
+| ZMK revision | **v0.2.1** | main | v0.2.1 ✅ |
+| PMW3610 remote | **inorichi** | badjeff | inorichi ✅ |
+| zmk-rgbled-widget | caksoylar | caksoylar | caksoylar ✅ |
+| zmk-input-processor-keybind | なし | zettaface | なし ✅ |
+
+---
+
+### レイヤー構成比較
+
+| Layer | このリポジトリ | moNa2-v2 | LiNEA40 |
+|-------|--------------|----------|---------|
+| 0 | Default | default_layer | (LiNEA40) |
+| 1 | **MOUSE (AML)** | layer_1 | MOUSE (AML) ✅ |
+| 2 | MARK | layer_2 | - |
+| 3 | CURSOR | layer_3 | - |
+| 4 | FUNCTION | layer_4 | - |
+| 5 | SCROLL | **MOUSE** | SCROLL ✅ |
+| 6 | WIRELESS | **SCROLL** | - |
+
+> **レイヤー番号**: AML layer=1、scroll-layers=5でLiNEA40と一致
 
 ---
 
@@ -108,10 +137,18 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 ✅ **安定性に関わる設定はLiNEA40踏襲**
 - ZMK v0.2.1（安定版タグ）
 - inorichi版PMW3610ドライバ
-- BLE実験的機能無効化
+- BLE実験的機能無効化（EXPERIMENTAL_CONN, PHY_2M）
 - CONFIG_ZMK_POINTING（左側）
+- ドライバ内蔵AML方式
 
-✅ **動作に関わる設定はmoNa2-v2踏襲（ただし安定性のためAMLはLiNEA40方式に変更）**
+✅ **動作に関わる設定はmoNa2に最適化**
 - キーマップ（combos、macros、behaviors）
-- AML設定（**ドライバ内蔵方式**: input-processor版は廃止）
-- ロータリーエンコーダー設定
+- INVERT_X/Y=n（moNa2のトラックボール配置に合わせる）
+- INVERT_SCROLL_X=y
+- ロータリーエンコーダー triggers-per-rotation=8
+
+✅ **moNa2-v2からの変更点**
+- PMW3610ドライバ: badjeff → inorichi
+- AML方式: input-processor → ドライバ内蔵
+- ZMK: main → v0.2.1
+- BLE実験的機能: 有効 → 無効
