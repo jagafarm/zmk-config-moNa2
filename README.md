@@ -1,6 +1,6 @@
 # moNa2 ZMK Config
 
-LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定を適用したファームウェア設定。
+LiNEA40の安定設定をベースに、moNa2のハードウェアに最適化したファームウェア設定。
 
 ---
 
@@ -67,11 +67,13 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 
 | 項目 | このリポジトリ | moNa2-v2 | LiNEA40 |
 |------|--------------|----------|---------|
-| BT_CTLR_TX_PWR_PLUS_4 | **y（右）, y（左）** | y | なし |
+| BT_CTLR_TX_PWR_PLUS_4 | **y（両側）** | y | なし |
 | BT_PERIPHERAL_PREF_MAX_INT | なし | 12 | なし ✅ |
 | ZMK_BLE_EXPERIMENTAL_CONN | **なし** | y ⚠️ | なし ✅ |
 | BT_CTLR_PHY_2M | **なし** | y | なし ✅ |
 
+> **BT_CTLR_TX_PWR_PLUS_4**: moNa2で切断問題が発生しているため、TX Powerを+4dBmに上げている。LiNEA40はデフォルト電力で安定動作するため不要
+>
 > **BLE_EXPERIMENTAL_CONN / PHY_2M**: moNa2-v2で有効だった実験的機能は安定性のため無効化
 
 ---
@@ -89,6 +91,8 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | CONFIG_BT_BAS | **y** | なし | なし |
 
 > **CONFIG_ZMK_POINTING**: split pointing動作に必要。LiNEA40にはあるがmoNa2-v2にはなかった
+>
+> **CONFIG_BT_BAS**: Battery Service有効化（Bluetoothでバッテリー残量を通知するため）
 
 ---
 
@@ -99,9 +103,11 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | ドライバcompatible | `pixart,pmw3610` | `pixart,pmw3610-alt` | `pixart,pmw3610` ✅ |
 | trackball内cpi設定 | なし（conf側） | overlay内 | なし ✅ |
 | trackball内invert設定 | なし（conf側） | overlay内 | なし ✅ |
-| irq-gpios | `&gpio0 2` | `&gpio0 2` ✅ | `&xiao_d 6` |
+| irq-gpios | **`&gpio0 2`** | `&gpio0 2` ✅ | `&xiao_d 6` |
 | automouse-layer | **overlay内で設定** | なし | overlay内 ✅ |
 | scroll-layers | **overlay内で設定** | なし（input-processor） | overlay内 ✅ |
+
+> **irq-gpios**: 基板の配線が異なるため、GPIOピンが違う（moNa2: `&gpio0 2`、LiNEA40: `&xiao_d 6`）
 
 ---
 
@@ -114,21 +120,36 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 | zmk-rgbled-widget | caksoylar | caksoylar | caksoylar ✅ |
 | zmk-input-processor-keybind | なし | zettaface | なし ✅ |
 
+> **inorichi vs badjeff**: inorichi版は安定性が高く、ドライバ内蔵AML方式をサポート。badjeff版（alt）はinput-processor方式
+
 ---
 
 ### レイヤー構成比較
 
 | Layer | このリポジトリ | moNa2-v2 | LiNEA40 |
 |-------|--------------|----------|---------|
-| 0 | Default | default_layer | (LiNEA40) |
+| 0 | Default | default_layer | Default ✅ |
 | 1 | **MOUSE (AML)** | layer_1 | MOUSE (AML) ✅ |
-| 2 | MARK | layer_2 | - |
-| 3 | CURSOR | layer_3 | - |
-| 4 | FUNCTION | layer_4 | - |
+| 2 | MARK | layer_2 | MARK ✅ |
+| 3 | CURSOR | layer_3 | CURSOR ✅ |
+| 4 | FUNCTION | layer_4 | FUNCTION ✅ |
 | 5 | SCROLL | **MOUSE** | SCROLL ✅ |
-| 6 | WIRELESS | **SCROLL** | - |
+| 6 | WIRELESS | **SCROLL** | WIRELESS ✅ |
 
-> **レイヤー番号**: AML layer=1、scroll-layers=5でLiNEA40と一致
+> **レイヤー番号**: このリポジトリはLiNEA40と同じ構成。moNa2-v2はレイヤー名と番号が異なる
+
+---
+
+## moNa2とLiNEA40の主な差分と理由
+
+| 差分項目 | moNa2 | LiNEA40 | 理由 |
+|----------|-------|---------|------|
+| INVERT_X/Y | n | y | トラックボールの物理的な取り付け向きが異なる |
+| INVERT_SCROLL_X | y | n | スクロール方向の好み調整 |
+| irq-gpios | `&gpio0 2` | `&xiao_d 6` | 基板の配線が異なる |
+| BT_CTLR_TX_PWR_PLUS_4 | y | なし | moNa2の切断問題対策（LiNEA40はデフォルトで安定） |
+| CONFIG_BT_BAS | y | なし | バッテリー残量のBluetooth通知用 |
+| snipe-layers | コメントアウト | 2 | 現在未使用のため無効化 |
 
 ---
 
@@ -140,15 +161,17 @@ LiNEA40の安定設定をベースに、moNa2-v2のキーマップ・AML設定�
 - BLE実験的機能無効化（EXPERIMENTAL_CONN, PHY_2M）
 - CONFIG_ZMK_POINTING（左側）
 - ドライバ内蔵AML方式
+- レイヤー構成（MOUSE/MARK/CURSOR/FUNCTION/SCROLL/WIRELESS）
 
-✅ **動作に関わる設定はmoNa2に最適化**
-- キーマップ（combos、macros、behaviors）
+✅ **moNa2ハードウェアに最適化**
 - INVERT_X/Y=n（moNa2のトラックボール配置に合わせる）
 - INVERT_SCROLL_X=y
-- ロータリーエンコーダー triggers-per-rotation=8
+- irq-gpios=`&gpio0 2`
+- BT_CTLR_TX_PWR_PLUS_4=y（切断問題対策）
 
 ✅ **moNa2-v2からの変更点**
 - PMW3610ドライバ: badjeff → inorichi
 - AML方式: input-processor → ドライバ内蔵
 - ZMK: main → v0.2.1
 - BLE実験的機能: 有効 → 無効
+- レイヤー構成: LiNEA40形式に統一
