@@ -39,11 +39,10 @@
 &trackball_central_listener {
     scroller {
         layers = <SCROLL>;
-        input-processors =
-            <&zip_xy_to_scroll_mapper>,
-            <&zip_wheel_scaler 1 2>;
+        input-processors = <&zip_xy_to_scroll_mapper>, <&zip_wheel_scaler 1 2>;
     };
 };
+
 / {
     combos {
         compatible = "zmk,combos";
@@ -183,7 +182,7 @@
 &trans  &trans              &trans            &trans         &trans  &trans    &trans  &trans                                                      &trans
             >;
 
-            sensor-bindings = <&scroll_up_down>;
+            sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOLUME_UP>;
         };
 
         WIRELESS {
